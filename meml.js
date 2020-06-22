@@ -17,13 +17,9 @@ function lexer(){
 }
 
 function parser(){
-    var count = 0;
+    var count = 0
 
     console.log(lines)
-}
-
-function setlines(line){
-    lines.push(line)
 }
 
 // CLI Argument Reading
@@ -43,7 +39,8 @@ if (cliArgs[0].endsWith(".meml")){
     });
 
     readInterface.on('line', function(line) {
-        setlines(line)
+        lines.push(line)
+        console.log(line)
     });
 
     // Call Parser
