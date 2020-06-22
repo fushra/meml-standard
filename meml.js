@@ -4,7 +4,6 @@ var readline = require("readline")
 var cliArgs = process.argv.slice(2)
 var version = "0"
 var output = "!default"
-var lines = []
 var ast = []
 
 // Functions
@@ -16,14 +15,22 @@ function lexer(){
     // Make sense of parsed syntax
 }
 
-function parser(){
-    var count = 0
+function parser(readInterface){
+    readInterface.on('line', function(line) {
+        // Trim Whitespace
+        line = line.trim()
+        if (line.startsWith("//")){
+            line = ""
+        } else if (line.startsWith("(")){
 
-    console.log(lines)
+        }
+        console.log(line)
+    });
 }
 
 // CLI Argument Reading
 if (cliArgs[0].endsWith(".meml")){
+    // CLI output
     if(cliArgs[1] === "--output " || cliArgs[1] === "-o"){
         output = cliArgs[2]
         console.log("New Output Filename:", output)
@@ -38,17 +45,12 @@ if (cliArgs[0].endsWith(".meml")){
         console: false
     });
 
-    readInterface.on('line', function(line) {
-        lines.push(line)
-        console.log(line)
-    });
-
     // Call Parser
-    parser(lines)
+    parser(readInterface)
 } else if (cliArgs[0] === "--help" || cliArgs[0] === "-h"){
     console.log(`    MEML ${version}
     meml [options] [options...] [options...]
-    
+    is question's answers are a community effort. Edit existing answers to improve this post. It is not currently accepting new answers or interactions. 
     options:
     -h | --help      - Displays help information
     -v | --version   - Displays version number
