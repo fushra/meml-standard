@@ -4,7 +4,7 @@ var readline = require("readline")
 var cliArgs = process.argv.slice(2)
 var version = "0"
 var output = "!default"
-var ast = []
+var ast = new Array
 
 // Functions
 function createFile(){
@@ -15,17 +15,28 @@ function lexer(){
     // Make sense of parsed syntax
 }
 
-function parser(readInterface){
-    readInterface.on('line', function(line) {
-        // Trim Whitespace
-        line = line.trim()
-        if (line.startsWith("//")){
-            line = ""
-        } else if (line.startsWith("(")){
+function parser(file){
+    var c = 0
 
+    // Split file and remove whitespace
+    file = file.split("\n")
+    for (i in file){
+        file[i] = file[i].trim()
+    }
+
+    // Split syntax
+    while(c < file.length){
+        if(file[c].startsWith("//")){
+            while(file[c].startsWith("//")){
+                file.splice(c, 1)
+            }
         }
-        console.log(line)
-    });
+
+        c++
+    }
+
+    console.log(file)
+
 }
 
 // CLI Argument Reading
@@ -36,17 +47,10 @@ if (cliArgs[0].endsWith(".meml")){
         console.log("New Output Filename:", output)
     }
 
-    // READ FILE
-    const readInterface = readline.createInterface({
-        input: fs.createReadStream(cliArgs[0]),
-        /* Creates stupid issues
-        output: process.stdout,
-        */
-        console: false
-    });
+    // Read file and call parser
+    var text = fs.readFileSync(cliArgs[0]).toString('utf-8')
+    parser(text)
 
-    // Call Parser
-    parser(readInterface)
 } else if (cliArgs[0] === "--help" || cliArgs[0] === "-h"){
     console.log(`    MEML ${version}
     meml [options] [options...] [options...]
