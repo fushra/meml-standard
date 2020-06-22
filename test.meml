@@ -1,0 +1,7 @@
+// Yeah this is basically LISP HTML
+(head
+    (charset "UTF-8")
+    (viewport 1)
+    (title "testing meml"))
+(body
+    (p "gosh darn it, I just made HTML more... LISP"))
