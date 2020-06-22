@@ -11,7 +11,7 @@ function createFile(){
 }
 
 function codeStitcher(){
-    
+    // Stitch HTML/CSS together
 }
 
 function lexer(){
@@ -41,12 +41,9 @@ function parser(file){
                 file.splice(c, 1)
             }
         }
-
         c++
     }
-
     console.log(file)
-
 }
 
 // CLI Argument Reading
