@@ -3,7 +3,6 @@ var fs = require("fs")
 var cliArgs = process.argv.slice(2)
 var version = "0"
 var output = "!default"
-var ast = new Array
 
 // Functions
 function createFile(){
@@ -14,14 +13,16 @@ function codeStitcher(){
     // Stitch HTML/CSS together
 }
 
-function lexer(){
+function lexer(ast){
     // Make sense of parsed syntax
+}
+
+function replaceAll(string, search, replace) {
+    return string.split(search).join(replace)
 }
 
 function parser(file){
     var c = 0
-    var charCount = 0
-    var splitFile = file.split("") // Split file syntax
 
     // Split file and remove whitespace
     file = file.split("\n")
@@ -46,30 +47,26 @@ function parser(file){
         c++
     }
 
-    c = 0 ; // Resets C (count) variable for later use 
+    c = 0 // Resets C (count) variable for later use 
 
     // String together the new file in one line
     file = file.join(",")
-    while(file.includes(",")){
-        file = file.replace(",", " ")
-        /**
-         * The syntax for the file is without comments, and remnants of
-         * the original file array, where file is now a string of the code
-         * made by the original file. This line is how we will split the syntax.
-         */
+    file = replaceAll(file, ",", " ") 
+
+    // Split out all keywords
+    var splitFile = replaceAll(file, ")","\n)\n")
+    splitFile = replaceAll(splitFile, "(","\n(\n")
+    splitFile = replaceAll(splitFile, "\"","\n\"\n")
+    splitFile = replaceAll(splitFile, " ","\n \n")
+    splitFile = splitFile.split("\n")
+
+    for (i in splitFile){
+        if(splitFile[i] === ""){
+            splitFile.splice(i, 1)
+        }
     }
 
-    for(i in file){
-        charCount += 1
-    }
-
-    // Split file by char
-    for(charCount in file){
-       
-        console.log(splitFile)
-    }
-
-    console.log(file)
+    lexer(splitFile) // Move onto lexer stage
 }
 
 // CLI Argument Reading
