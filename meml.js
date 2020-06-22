@@ -27,6 +27,13 @@ function parser(file){
     // Split syntax
     while(c < file.length){
         if(file[c].startsWith("//")){
+            /**
+             * I hate doing this but NodeJS
+             * is a mess and forced my hand 
+             * to do this idiotic mess in a
+             * stupid while loop inside an
+             * if statement
+             */
             while(file[c].startsWith("//")){
                 file.splice(c, 1)
             }
