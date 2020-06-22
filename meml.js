@@ -1,6 +1,5 @@
 // Variables
 var fs = require("fs")
-var readline = require("readline")
 var cliArgs = process.argv.slice(2)
 var version = "0"
 var output = "!default"
