@@ -10,6 +10,10 @@ function createFile(){
     // Create final HTML file
 }
 
+function codeStitcher(){
+    
+}
+
 function lexer(){
     // Make sense of parsed syntax
 }
