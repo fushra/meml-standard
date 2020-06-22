@@ -20,6 +20,8 @@ function lexer(){
 
 function parser(file){
     var c = 0
+    var charCount = 0
+    var splitFile = file.split("") // Split file syntax
 
     // Split file and remove whitespace
     file = file.split("\n")
@@ -27,7 +29,7 @@ function parser(file){
         file[i] = file[i].trim()
     }
 
-    // Split syntax
+    // Remove comments
     while(c < file.length){
         if(file[c].startsWith("//")){
             /**
@@ -43,6 +45,30 @@ function parser(file){
         }
         c++
     }
+
+    c = 0 ; // Resets C (count) variable for later use 
+
+    // String together the new file in one line
+    file = file.join(",")
+    while(file.includes(",")){
+        file = file.replace(",", " ")
+        /**
+         * The syntax for the file is without comments, and remnants of
+         * the original file array, where file is now a string of the code
+         * made by the original file. This line is how we will split the syntax.
+         */
+    }
+
+    for(i in file){
+        charCount += 1
+    }
+
+    // Split file by char
+    for(charCount in file){
+       
+        console.log(splitFile)
+    }
+
     console.log(file)
 }
 
