@@ -1,5 +1,5 @@
 <center>
-<img src="https://raw.githubusercontent.com/fivnex/meml/master/meml-logo.png?token=APABEOAP6IXLNBXCH2RNCHC66FRYE" alt="meml icon" width="50px">
+<img src="https://raw.githubusercontent.com/fivnex/meml/master/meml-logo.png?token=APABEOE65MZQBP4LY2CCW6S66FUMI" alt="meml-icon" width="50px" />
 
 # Minimal Efficient Markup Language
 Extension: `.meml`
