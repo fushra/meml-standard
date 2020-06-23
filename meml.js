@@ -2,18 +2,24 @@
 var fs = require("fs")
 const { AssertionError } = require("assert")
 var cliArgs = process.argv.slice(2)
-var version = "0"
-var output = "!default"
-var htmlBegin = "<!DOCTYPE html>\n<html>\n"
-var htmlEnd = "\n</html>"
+var version = "0.0.1_public_beta"
+var defaultOutputName = cliArgs[0].replace(".meml", ".html")
+var output = defaultOutputName
+var htmlBegin = "<!DOCTYPE html><html>"
+var htmlEnd = "</html>"
 
 // Functions
-function createFile(){
-    // Create final HTML file
+function createFile(outputData){
+    fs.writeFile(output, outputData, function (err) {
+        if (err) return console.log(err)
+        console.log("File Created:", output)
+    });
 }
 
-function codeStitcher(){
-    // Stitch HTML/CSS together
+function codeStitcher(codeLibrary){
+    codeLibrary = codeLibrary.join("")
+    codeLibrary = htmlBegin + codeLibrary + htmlEnd
+    createFile(codeLibrary)
 }
 
 function lexer(ast){
@@ -167,7 +173,7 @@ function lexer(ast){
     }
     c = 0 // reset C variable in case of further counting
 
-    console.log(ast)
+    codeStitcher(ast)
 }
 
 function replaceAll(string, search, replace) {
