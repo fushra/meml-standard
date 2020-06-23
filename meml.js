@@ -44,7 +44,6 @@ function lexer(ast){
         }
         c++
     }
-    console.log("Placement of string items in AST:", itemPlaceOne, itemPlaceTwo, "distance:", itemDist)
     console.log(ast)
 }
 
