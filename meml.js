@@ -3,6 +3,8 @@ var fs = require("fs")
 var cliArgs = process.argv.slice(2)
 var version = "0"
 var output = "!default"
+var htmlBegin = "<!DOCTYPE html>\n<html>\n"
+var htmlEnd = "\n</html>"
 
 // Functions
 function createFile(){
@@ -20,11 +22,14 @@ function lexer(ast){
     var itemPlaceTwo = 0
     var itemDist = 0
     var itemCounted = 0
+
+    // General count variable
     var c = 0
-    var x = 0
 
     // Make the AST more complete
     for (i in ast){
+
+        // Combine Strins
         if (ast[i] === "\"" ){
             itemCount++
 
@@ -42,9 +47,27 @@ function lexer(ast){
                 itemPlaceOne = c;
             }
         }
+
+        // Combine Tags with open paren
+        if (ast[i] === "("){
+            ast[c] += ast[c+1]
+            ast.splice(c+1, 1)
+        }
+
         c++
     }
-    console.log(ast)
+
+    // Join and trim AST
+    ast = ast.join("")
+    ast = ast.trim()
+    ast = replaceAll(ast, "(","\n(")
+    ast = replaceAll(ast, ")",")\n")
+
+    // Split AST by open paren, and keep  tag
+    ast = ast.split("\n")
+    ast = ast.filter(item => item)
+
+    console.log(htmlBegin,ast,htmlEnd)
 }
 
 function replaceAll(string, search, replace) {
@@ -65,7 +88,8 @@ function parser(file){
         if(file[c].startsWith("//")){
             /**
              * I hate doing this but NodeJS
-             * is a mess and forced my hand 
+             * is a mess and forced my hand les/cjs/loader.js:831:12)
+    at startup (internal/bootstrap/node.js:283
              * to do this idiotic mess in a
              * stupid while loop inside an
              * if statement
@@ -80,8 +104,7 @@ function parser(file){
     c = 0 // Resets C (count) variable for later use 
 
     // String together the new file in one line
-    file = file.join(",")
-    file = replaceAll(file, ",", " ")  // Find fix!!!
+    file = file.join("")
 
     // Split out all keywords
     var splitFile = replaceAll(file, ")","\n)\n")
