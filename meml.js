@@ -15,6 +15,7 @@ function codeStitcher(){
 
 function lexer(ast){
     // Make sense of parsed syntax
+    console.log(ast)
 }
 
 function replaceAll(string, search, replace) {
@@ -51,7 +52,7 @@ function parser(file){
 
     // String together the new file in one line
     file = file.join(",")
-    file = replaceAll(file, ",", " ") 
+    file = replaceAll(file, ",", " ")  // Find fix!!!
 
     // Split out all keywords
     var splitFile = replaceAll(file, ")","\n)\n")
