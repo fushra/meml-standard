@@ -14,7 +14,37 @@ function codeStitcher(){
 }
 
 function lexer(ast){
-    // Make sense of parsed syntax
+    // Variables to find string and string placement
+    var itemCount = 0
+    var itemPlaceOne = 0
+    var itemPlaceTwo = 0
+    var itemDist = 0
+    var itemCounted = 0
+    var c = 0
+    var x = 0
+
+    // Make the AST more complete
+    for (i in ast){
+        if (ast[i] === "\"" ){
+            itemCount++
+
+            if (itemCount%2 == 0){
+                itemPlaceTwo = c;
+
+                // Start combining strings
+                itemDist = itemPlaceTwo - itemPlaceOne - 1
+                for(x=0; x <= itemDist; x++){
+                    itemCounted = itemPlaceOne + x + 1
+                    ast[itemPlaceOne] += ast[itemCounted]
+                }
+                ast.splice(itemPlaceOne + 1, itemDist + 1)
+            } else {
+                itemPlaceOne = c;
+            }
+        }
+        c++
+    }
+    console.log("Placement of string items in AST:", itemPlaceOne, itemPlaceTwo, "distance:", itemDist)
     console.log(ast)
 }
 
