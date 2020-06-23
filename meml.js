@@ -91,6 +91,10 @@ function lexer(ast){
     var oLine = new Array // One line placements
     var mLineOpen = new Array // Multi-Line Open placements
     var mLineClosed = new Array // Multi-Line Closed placements
+    var c2 = 0 // 2nd counter, just in case
+    var headClosed = 0 // Check if Head tag is closed (1 or 0) (1 means yes, 0 means no)
+    var headTagPlacement // Where head opening tag is in AST Array
+    var bodyTagPlacement // Where body opening tag is in AST Array
     for (i in ast){
         if(!ast[i].startsWith("(")){
             mLineClosed.push(c)
@@ -99,7 +103,6 @@ function lexer(ast){
         if(!ast[i].endsWith(")")){
             mLineOpen.push(c)
         }
-
         if(ast[i].startsWith("(") && ast[i].endsWith(")")){
             oLine.push(c)
         }
@@ -114,18 +117,57 @@ function lexer(ast){
          *   > [<tag-title>, "string if applic", </tag title>]
          * - split array chunks into ast2  
          */
+        // ######################################
         // Translations
+        // ######################################
         if (ast[i].startsWith("(body")){
             ast[i] = ast[i].substr(1)
             ast[i] = "<" + ast[i] + ">"
+            bodyTagPlacement = c
         }
 
-        console.log(c, ast[i])
+        if (ast[i].startsWith("(head")){
+            ast[i] = ast[i].substr(1)
+            ast[i] = "<" + ast[i] + ">"
+            headTagPlacement = c
+        }
+
+        // Make this better
+        if (ast[i].startsWith("(") && !ast[i].startsWith("(charset")&& !ast[i].startsWith("(viewport")){
+            ast[i] = ast[i].substr(1)
+            var astName = ast[i].split("\"")[0]
+            var astCont = ast[i].split("\"")[1]
+            var astBegin = "<" + astName.trim() + ">"
+            var astEnd = "</" + astName.trim() + ">"
+            ast[i] = astBegin + astCont + astEnd
+        }
+
+        // Find opened but unclosed tags
+        // Could be better but works
+        for (i in mLineClosed){
+            if(ast[mLineOpen[i]] === "<head>"){
+                ast[mLineClosed[i]] = "</head>"
+            }
+            if(ast[mLineOpen[i]] === "<body>"){
+                ast[mLineClosed[i]] = "</body>"
+            }
+        }
+
+        // Special tag placements
+        if(ast[i].startsWith("(viewport")){
+            // Make this better suited later
+            ast[i] = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></meta>"
+        }
+        if(ast[i].startsWith("(charset")){
+            var astCont = ast[i].split("\"")[1]
+            ast[i] = "<meta charset=" + astCont+ "></meta>"
+        }
+
         c++
     }
     c = 0 // reset C variable in case of further counting
-    console.log("Open/MLOpen/MLClosed", oLine, mLineOpen, mLineClosed)
-    console.log(htmlBegin,ast.join("\n"),htmlEnd)
+
+    console.log(ast)
 }
 
 function replaceAll(string, search, replace) {
@@ -146,8 +188,7 @@ function parser(file){
         if(file[c].startsWith("//")){
             /**
              * I hate doing this but NodeJS
-             * is a mess and forced my hand les/cjs/loader.js:831:12)
-    at startup (internal/bootstrap/node.js:283
+             * is a mess and forced my hand 
              * to do this idiotic mess in a
              * stupid while loop inside an
              * if statement
@@ -177,7 +218,7 @@ function parser(file){
         }
     }
 
-    lexer(splitFile) // Move onto lexer stage     * 
+    lexer(splitFile) // Move onto lexer stage
 }
 
 // CLI Argument Reading
