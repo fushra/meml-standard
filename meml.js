@@ -2,7 +2,7 @@
 var fs = require("fs")
 const { AssertionError } = require("assert")
 var cliArgs = process.argv.slice(2)
-var version = "0.0.1_public_beta"
+var version = "0.0.1_public-beta"
 var defaultOutputName = cliArgs[0].replace(".meml", ".html")
 var output = defaultOutputName
 var htmlBegin = "<!DOCTYPE html><html>"
