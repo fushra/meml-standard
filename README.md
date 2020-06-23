@@ -1,8 +1,7 @@
-<img src="https://raw.githubusercontent.com/fivnex/meml/master/meml-logo.png?token=APABEOE65MZQBP4LY2CCW6S66FUMI" alt="meml-icon" width="50px" style="margin-left: auto; margin-right: auto; display: block" />
+<img src="https://raw.githubusercontent.com/fivnex/meml/master/meml-logo.png?token=APABEOE65MZQBP4LY2CCW6S66FUMI" alt="meml-icon" width="50px" />
 
-<h1 style="text-align: center">Minimal Efficient Markup Language</h1>
-
-<p style="text-align: center">Extension: <code>.meml</code>
+# Minimal Efficient Markup Language
+Extension: `.meml`
 
 ## What is MEML?
 MEML is a simple markup language that translates into HTML/CSS. MEML includes tags that are dedicated to basics like a dropdown menu tag, viewport tag, charset tag, navigation, and minimalization of HTML/CSS.
