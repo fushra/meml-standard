@@ -1,5 +1,6 @@
 // Variables
 var fs = require("fs")
+const { AssertionError } = require("assert")
 var cliArgs = process.argv.slice(2)
 var version = "0"
 var output = "!default"
@@ -56,6 +57,7 @@ function lexer(ast){
 
         c++
     }
+    c = 0 // reset C for future counts
 
     // Join and trim AST
     ast = ast.join("")
@@ -67,7 +69,63 @@ function lexer(ast){
     ast = ast.split("\n")
     ast = ast.filter(item => item)
 
-    console.log(htmlBegin,ast,htmlEnd)
+    /**
+     * The next part of the lexer discovers items like body and head
+     * where the tags are seperated by the inner items. The method
+     * could be better, but for now it works.
+     * 
+     * How it works is that it checks if either has no tag (by checking
+     * for open paren), or no close (by checking for closed paren)
+     * 
+     * If an item in the AST has both an open paren and closed paren inside
+     * the string, then it is a one-line tag, and will be fixed on the spot.
+     * 
+     * If an item in the AST doesn't include either a closed paren or
+     * open paren, it is a multi-line tag, and the closed tag is set to whatever
+     * is open but not closed. 
+     * 
+     * This can be cause for error when compiling, and an extra paren or missing
+     * paren is discovered. If it is, it will be by human error.
+     */
+    
+    var oLine = new Array // One line placements
+    var mLineOpen = new Array // Multi-Line Open placements
+    var mLineClosed = new Array // Multi-Line Closed placements
+    for (i in ast){
+        if(!ast[i].startsWith("(")){
+            mLineClosed.push(c)
+        }
+
+        if(!ast[i].endsWith(")")){
+            mLineOpen.push(c)
+        }
+
+        if(ast[i].startsWith("(") && ast[i].endsWith(")")){
+            oLine.push(c)
+        }
+
+        /**
+         * How Translations work (ignore if tag is charset or viewport):
+         * - Split the current item into [(, tag-title, "string if applic", )]
+         * - Remove open paren, and put tag title in arrow bracs
+         *   > Will look like [<tag-title>, "string if applic", )]
+         * - Copy tag in arrow bracs and replace the closed paren
+         * - Turn ending (with regex) into closed tag.
+         *   > [<tag-title>, "string if applic", </tag title>]
+         * - split array chunks into ast2  
+         */
+        // Translations
+        if (ast[i].startsWith("(body")){
+            ast[i] = ast[i].substr(1)
+            ast[i] = "<" + ast[i] + ">"
+        }
+
+        console.log(c, ast[i])
+        c++
+    }
+    c = 0 // reset C variable in case of further counting
+    console.log("Open/MLOpen/MLClosed", oLine, mLineOpen, mLineClosed)
+    console.log(htmlBegin,ast.join("\n"),htmlEnd)
 }
 
 function replaceAll(string, search, replace) {
@@ -119,7 +177,7 @@ function parser(file){
         }
     }
 
-    lexer(splitFile) // Move onto lexer stage
+    lexer(splitFile) // Move onto lexer stage     * 
 }
 
 // CLI Argument Reading
