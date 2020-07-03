@@ -5,8 +5,7 @@ var cliArgs = process.argv.slice(2)
 var version = "0.0.1_public-beta"
 var defaultOutputName = cliArgs[0].replace(".meml", ".html")
 var output = defaultOutputName
-var htmlExtras = "" // For adding on to the HTML tag
-var htmlTag = "<html " + htmlExtras + ">"
+var htmlTag = "<html "
 var htmlBegin = "<!DOCTYPE html>" + htmlTag
 var htmlEnd = "</html>"
 
@@ -18,9 +17,9 @@ function createFile(outputData){
     });
 }
 
-function codeStitcher(codeLibrary){
+function codeStitcher(codeLibrary, ixt){
     codeLibrary = codeLibrary.join("")
-    codeLibrary = htmlBegin + codeLibrary + htmlEnd
+    codeLibrary = htmlBegin + ixt + ">" + codeLibrary + htmlEnd
     createFile(codeLibrary)
 }
 
@@ -145,7 +144,8 @@ function lexer(ast){
         // General Tags
         // Make this better
         if (ast[i].startsWith("(") && !ast[i].startsWith("(charset") 
-        && !ast[i].startsWith("(viewport") && !ast[i].startsWith("(icon") && !ast[i].startsWith("(font")){
+        && !ast[i].startsWith("(viewport") && !ast[i].startsWith("(icon") && !ast[i].startsWith("(font")
+        && !ast[i].startsWith("(lang")){
             ast[i] = ast[i].substr(1)
             var astName = ast[i].split("\"")[0]
             var astCont = ast[i].split("\"")[1]
@@ -184,13 +184,30 @@ function lexer(ast){
             astCont = astCont.split("\")")[0]
             ast[i]= "<style>body{ font-family:" + astCont + "}</style>"
         }
+        if(ast[i].startsWith("(lang")){
+            // This adds "lang" to htmlExtras, and hopefully will remove the code in the tree
+            var astCont = ast[i].split("\"")[1]
+            astCont = astCont.split("\")")[0]
+            console.log("lang=\"" + astCont +"\"")
+            // lang="astCont"
+            var ixt = "lang=\"" + astCont +"\""
+            ast[i] = "" // Wont work with splicing
+        }
 
         c++
     }
     c = 0 // reset C variable in case of further counting
+
+    // Get rid of empty cells in AST
+    for (i in ast){
+        if(ast[i] === ""){
+            ast.splice(i, 1)
+        }
+    }
+
     console.log(ast)
 
-    codeStitcher(ast)
+    codeStitcher(ast, ixt)
 }
 
 function replaceAll(string, search, replace) {
