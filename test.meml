@@ -3,6 +3,7 @@
     (charset "UTF-8")
     (viewport 1)
     (title "testing meml")
-    (icon "./meml-logo.png"))
+    (icon "./meml-logo.png")
+    (font "arial"))
 (body
     (p "gosh darn it, I just made HTML more... LISP"))
