@@ -126,6 +126,8 @@ function lexer(ast){
         // ######################################
         // Translations
         // ######################################
+
+        // Body and head tags
         if (ast[i].startsWith("(body")){
             ast[i] = ast[i].substr(1)
             ast[i] = "<" + ast[i] + ">"
@@ -138,8 +140,9 @@ function lexer(ast){
             headTagPlacement = c
         }
 
+        // General Tags
         // Make this better
-        if (ast[i].startsWith("(") && !ast[i].startsWith("(charset")&& !ast[i].startsWith("(viewport")){
+        if (ast[i].startsWith("(") && !ast[i].startsWith("(charset")&& !ast[i].startsWith("(viewport") && !ast[i].startsWith("(icon")){
             ast[i] = ast[i].substr(1)
             var astName = ast[i].split("\"")[0]
             var astCont = ast[i].split("\"")[1]
@@ -153,7 +156,16 @@ function lexer(ast){
         for (i in mLineClosed){
             if(ast[mLineOpen[i]] === "<head>"){
                 ast[mLineClosed[i]] = "</head>"
-            }
+            }// General Tags
+        // Make this better
+        if (ast[i].startsWith("(") && !ast[i].startsWith("(charset")&& !ast[i].startsWith("(viewport") && !ast[i].startsWith("(icon")){
+            ast[i] = ast[i].substr(1)
+            var astName = ast[i].split("\"")[0]
+            var astCont = ast[i].split("\"")[1]
+            var astBegin = "<" + astName.trim() + ">"
+            var astEnd = "</" + astName.trim() + ">"
+            ast[i] = astBegin + astCont + astEnd
+        }
             if(ast[mLineOpen[i]] === "<body>"){
                 ast[mLineClosed[i]] = "</body>"
             }
@@ -168,10 +180,17 @@ function lexer(ast){
             var astCont = ast[i].split("\"")[1]
             ast[i] = "<meta charset=" + astCont+ "></meta>"
         }
+        if(ast[i].startsWith("(icon")){
+            var astCont = ast[i].split(" ")[1]
+            astCont = astCont.split(")")[0]
+            // <link rel="icon" href="astCont">
+            ast[i] = "<link rel=\"icon\" href=" + astCont + ">"
+        }
 
         c++
     }
     c = 0 // reset C variable in case of further counting
+    console.log(ast)
 
     codeStitcher(ast)
 }
