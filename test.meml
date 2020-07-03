@@ -2,6 +2,7 @@
 (head
     (charset "UTF-8")
     (viewport 1)
-    (title "testing meml"))
+    (title "testing meml")
+    (icon "./meml-logo.png"))
 (body
     (p "gosh darn it, I just made HTML more... LISP"))
