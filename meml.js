@@ -188,13 +188,35 @@ function lexer(ast){
             // This adds "lang" to htmlExtras, and hopefully will remove the code in the tree
             var astCont = ast[i].split("\"")[1]
             astCont = astCont.split("\")")[0]
-            console.log("lang=\"" + astCont +"\"")
             // lang="astCont"
             var ixt = "lang=\"" + astCont +"\""
             ast[i] = "" // Wont work with splicing
         }
         if (ast[i].startsWith("(meta")){
-            // This will be MUCH more complicated than the rest
+            // This is complicated of a tag
+            var astCont = ast[i].split("(meta ")[1]
+            astCont = astCont.split(")")[0]
+            astCont = astCont.split(" ")
+
+            // Strange but easy fix
+            if (astCont.length > 2){
+                var count = 2
+                for(i in astCont){
+                    astCont.splice(count, 1)
+                    count ++
+                }
+            }
+            var metaFirst = astCont[0]
+            var metaNext = astCont[1]
+
+            metaFirst = metaFirst.split("=")[1]
+            metaFirst = replaceAll(metaFirst, "\"", "")
+
+            metaNext = metaNext.split("=")
+            metaNextItem = metaNext[0]
+            metaNextContent = metaNext[1]
+            // <meta name="metaFirst:metaNext" content="content from metaNext">
+            ast[i] = "<meta name=\"" + metaFirst + ":" + metaNextItem + "\" content=" + metaNextContent + "></meta>"
         }
 
         c++
@@ -203,8 +225,10 @@ function lexer(ast){
 
     // Get rid of empty cells in AST
     for (i in ast){
-        if(ast[i] === ""){
-            ast.splice(i, 1)
+        for (i in ast){
+            if(ast[i] === ""){
+                ast.splice(i, 1)
+            }
         }
     }
 
