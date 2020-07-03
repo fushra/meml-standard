@@ -5,6 +5,8 @@
     (title "testing meml")
     (icon "./meml-logo.png")
     (font "arial")
-    (lang "en"))
+    (lang "en")
+    (meta type="og" 
+        title="title"))
 (body
     (p "gosh darn it, I just made HTML more... LISP"))

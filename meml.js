@@ -145,7 +145,7 @@ function lexer(ast){
         // Make this better
         if (ast[i].startsWith("(") && !ast[i].startsWith("(charset") 
         && !ast[i].startsWith("(viewport") && !ast[i].startsWith("(icon") && !ast[i].startsWith("(font")
-        && !ast[i].startsWith("(lang")){
+        && !ast[i].startsWith("(lang") && !ast[i].startsWith("(meta")){
             ast[i] = ast[i].substr(1)
             var astName = ast[i].split("\"")[0]
             var astCont = ast[i].split("\"")[1]
@@ -192,6 +192,9 @@ function lexer(ast){
             // lang="astCont"
             var ixt = "lang=\"" + astCont +"\""
             ast[i] = "" // Wont work with splicing
+        }
+        if (ast[i].startsWith("(meta")){
+            // This will be MUCH more complicated than the rest
         }
 
         c++
