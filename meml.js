@@ -102,6 +102,7 @@ function lexer(ast){
     var headClosed = 0 // Check if Head tag is closed (1 or 0) (1 means yes, 0 means no)
     var headTagPlacement // Where head opening tag is in AST Array
     var bodyTagPlacement // Where body opening tag is in AST Array
+    var multiLineTF = false // If it is in multi-line mode
     for (i in ast){
         if(!ast[i].startsWith("(")){
             mLineClosed.push(c)
@@ -141,11 +142,16 @@ function lexer(ast){
             headTagPlacement = c
         }
 
+        if (ast[i].startsWith("(div")){
+            ast[i] = ast[i].substr(1)
+            ast[i] = "<" + ast[i] + ">"
+        }
+
         // General Tags
         // Make this better
         if (ast[i].startsWith("(") && !ast[i].startsWith("(charset") 
         && !ast[i].startsWith("(viewport") && !ast[i].startsWith("(icon") && !ast[i].startsWith("(font")
-        && !ast[i].startsWith("(lang") && !ast[i].startsWith("(meta")){
+        && !ast[i].startsWith("(lang") && !ast[i].startsWith("(meta") && !ast[i].startsWith("(div")){
             ast[i] = ast[i].substr(1)
             var astName = ast[i].split("\"")[0]
             var astCont = ast[i].split("\"")[1]
@@ -160,8 +166,11 @@ function lexer(ast){
             if(ast[mLineOpen[i]] === "<head>"){
                 ast[mLineClosed[i]] = "</head>"
             }
+            if(ast[mLineOpen[i]] === "<div>"){
+                ast[mLineClosed[i] - 1] = "</div>" // Weird fix but okay
+            }
             if(ast[mLineOpen[i]] === "<body>"){
-                ast[mLineClosed[i]] = "</body>"
+                ast[mLineClosed[i] + 1] = "</body>" // Weird fix but okay
             }
         }
 
@@ -218,7 +227,7 @@ function lexer(ast){
             // <meta name="metaFirst:metaNext" content="content from metaNext">
             ast[i] = "<meta name=\"" + metaFirst + ":" + metaNextItem + "\" content=" + metaNextContent + "></meta>"
         }
-
+        
         c++
     }
     c = 0 // reset C variable in case of further counting

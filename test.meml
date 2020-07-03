@@ -8,4 +8,6 @@
     (lang "en")
     (meta type="og" title="title"))
 (body
-    (p "gosh darn it, I just made HTML more... LISP"))
+    (p "gosh darn it, I just made HTML more... LISP")
+    (div
+        (p "p in div tag")))
