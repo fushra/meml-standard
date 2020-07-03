@@ -1,6 +1,5 @@
 // Variables
 var fs = require("fs")
-const { AssertionError } = require("assert")
 var cliArgs = process.argv.slice(2)
 var version = "0.0.1_public-beta"
 var defaultOutputName = cliArgs[0].replace(".meml", ".html")
@@ -98,11 +97,6 @@ function lexer(ast){
     var oLine = new Array // One line placements
     var mLineOpen = new Array // Multi-Line Open placements
     var mLineClosed = new Array // Multi-Line Closed placements
-    var c2 = 0 // 2nd counter, just in case
-    var headClosed = 0 // Check if Head tag is closed (1 or 0) (1 means yes, 0 means no)
-    var headTagPlacement // Where head opening tag is in AST Array
-    var bodyTagPlacement // Where body opening tag is in AST Array
-    var multiLineTF = false // If it is in multi-line mode
     for (i in ast){
         if(!ast[i].startsWith("(")){
             mLineClosed.push(c)
@@ -240,8 +234,6 @@ function lexer(ast){
             }
         }
     }
-
-    console.log(ast)
 
     codeStitcher(ast, ixt)
 }
