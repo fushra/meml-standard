@@ -4,6 +4,7 @@
     (viewport 1)
     (title "testing meml")
     (icon "./meml-logo.png")
-    (font "arial"))
+    (font "arial")
+    (lang "en"))
 (body
     (p "gosh darn it, I just made HTML more... LISP"))
