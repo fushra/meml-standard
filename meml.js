@@ -142,7 +142,8 @@ function lexer(ast){
 
         // General Tags
         // Make this better
-        if (ast[i].startsWith("(") && !ast[i].startsWith("(charset")&& !ast[i].startsWith("(viewport") && !ast[i].startsWith("(icon")){
+        if (ast[i].startsWith("(") && !ast[i].startsWith("(charset") 
+        && !ast[i].startsWith("(viewport") && !ast[i].startsWith("(icon") && !ast[i].startsWith("(font")){
             ast[i] = ast[i].substr(1)
             var astName = ast[i].split("\"")[0]
             var astCont = ast[i].split("\"")[1]
@@ -156,16 +157,7 @@ function lexer(ast){
         for (i in mLineClosed){
             if(ast[mLineOpen[i]] === "<head>"){
                 ast[mLineClosed[i]] = "</head>"
-            }// General Tags
-        // Make this better
-        if (ast[i].startsWith("(") && !ast[i].startsWith("(charset")&& !ast[i].startsWith("(viewport") && !ast[i].startsWith("(icon")){
-            ast[i] = ast[i].substr(1)
-            var astName = ast[i].split("\"")[0]
-            var astCont = ast[i].split("\"")[1]
-            var astBegin = "<" + astName.trim() + ">"
-            var astEnd = "</" + astName.trim() + ">"
-            ast[i] = astBegin + astCont + astEnd
-        }
+            }
             if(ast[mLineOpen[i]] === "<body>"){
                 ast[mLineClosed[i]] = "</body>"
             }
@@ -183,8 +175,12 @@ function lexer(ast){
         if(ast[i].startsWith("(icon")){
             var astCont = ast[i].split(" ")[1]
             astCont = astCont.split(")")[0]
-            // <link rel="icon" href="astCont">
             ast[i] = "<link rel=\"icon\" href=" + astCont + ">"
+        }
+        if(ast[i].startsWith("(font")){
+            var astCont = ast[i].split("\"")[1]
+            astCont = astCont.split("\")")[0]
+            ast[i]= "<style>body{ font-family:" + astCont + "}</style>"
         }
 
         c++
