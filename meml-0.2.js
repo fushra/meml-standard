@@ -17,6 +17,32 @@ function replaceAll(string, search, replace) {
     return string.split(search).join(replace)
 }
 
+function lexer(text) {
+    // Fix issues with body and head tag (adds comma)
+    for(i in text){
+        if(text[i].startsWith("body")){
+            text[i] = "body"
+        } else if(text[i].startsWith("head")){
+            text[i] = "head"
+        }
+    }
+
+    // Get data
+    for(i in text){
+        if (text[i] == "("){
+            // Open paren counting (for data)
+            openParen++
+        } else if (text[i] == ")"){
+            // Closed paren counting (for data)
+            closedParen++
+        } else if (text[i].match(/^[A-Za-z]+$/) && !text.includes("\"")){
+            keyword++
+        }
+    }
+
+    console.log(text, openParen, closedParen, keyword)
+}
+
 // Parse text
 function parser(text){
     text = text.split("\n")
@@ -57,29 +83,18 @@ function parser(text){
     var itemCounted = 0
     var c = 0
     for (i in text){
-        if (text[i] == "("){
-            // Open paren counting (for data)
-            openParen++
-        } else if (text[i] == ")"){
-            // Closed paren counting (for data)
-            closedParen++
-        } else if (text[i] == (/^[A-Za-z]+$/)){
-            keyword++
-        }
         if (text[i] == "\"" ){
             // Join strings together
             itemCount++
             if (itemCount%2 == 0){
                 itemPlaceTwo = c
                 itemDist = itemPlaceTwo - itemPlaceOne - 1
-                console.log(itemDist)
                 for(x=0; x <= itemDist; x++){
                     itemCounted = itemPlaceOne + x + 1
                     text[itemPlaceOne] += text[itemCounted]
                 }
                 text.splice(itemPlaceOne + 1, itemDist + 1)
-            }
-            else {
+            } else {
                 itemPlaceOne = c;
             }
         }
@@ -87,8 +102,7 @@ function parser(text){
         c++
     }
     
-    
-    console.log(text, openParen, closedParen, keyword)
+    lexer(text)
 }
 
 // CLI Argument Reading
