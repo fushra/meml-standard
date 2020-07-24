@@ -33,6 +33,6 @@ You might notice that there are missing tags. Tags such as `<!DOCTYPE html>` are
 
 If you have experience in the LISP programming language, or anything similar (like Racket and Clojure), you will notice the syntax is very similar. If you have not, it is less scary than it might look!
 
-You can read more on the Wiki: *coming soon*.
+You can read more in the docs: [here](https://meml.readthedocs.io).
 
 ---
