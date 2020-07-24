@@ -15,6 +15,9 @@ var keywordList = new Array
 var keywordPlacement = new Array
 var openParenPlacement = new Array
 var closedParenPlacement = new Array
+var openToNextClosed = 0
+var currentOpenToClose = new Array
+var closedAfterOpens = new Array
 
 // The best function, replaces everything
 function replaceAll(string, search, replace) {
@@ -36,15 +39,23 @@ function lexer(text) {
             // Open paren counting (for data)
             openParen++
             openParenPlacement.push(i)
+            openToNextClosed++
+            currentOpenToClose.push(openToNextClosed)
         } else if (text[i] == ")"){
             // Closed paren counting (for data)
             closedParen++
             closedParenPlacement.push(i)
+            closedAfterOpens.push(openToNextClosed)
+            openToNextClosed = 0
         } else if (text[i].match(/^[A-Za-z]+$/) && !text.includes("\"")){
             keyword++
             keywordList.push(text[i])
             keywordPlacement.push(i)
         }
+    }
+
+    for(i in closedAfterOpens){
+        console.log(currentOpenToClose, closedAfterOpens)
     }
 
     // The tag placement
@@ -122,23 +133,26 @@ function parser(text){
     var itemCounted = 0
     var c = 0
     for (i in text){
-        if (text[i] == "\"" ){
-            // Join strings together
-            itemCount++
-            if (itemCount%2 == 0){
-                itemPlaceTwo = c
-                itemDist = itemPlaceTwo - itemPlaceOne - 1
-                for(x=0; x <= itemDist; x++){
-                    itemCounted = itemPlaceOne + x + 1
-                    text[itemPlaceOne] += text[itemCounted]
+        for (i in text){
+            if (text[i] == "\"" ){
+                // Join strings together
+                itemCount++
+                if (itemCount%2 == 0){
+                    itemPlaceTwo = c
+                    itemDist = itemPlaceTwo - itemPlaceOne - 1
+                    for(x=0; x <= itemDist; x++){
+                        itemCounted = itemPlaceOne + x + 1
+                        text[itemPlaceOne] += text[itemCounted]
+                    }
+                    text.splice(itemPlaceOne + 1, itemDist + 1)
+                } else {
+                    itemPlaceOne = c;
                 }
-                text.splice(itemPlaceOne + 1, itemDist + 1)
-            } else {
-                itemPlaceOne = c;
             }
-        }
 
-        c++
+            c++
+        }
+        c = 0
     }
     
     lexer(text)
