@@ -1,10 +1,10 @@
 // Variables
 var fs = require("fs")
 var cliArgs = process.argv.slice(2)
-var version = "0.1"
+var version = "0.2"
 var defaultOutputName = cliArgs[0].replace(".meml", ".html")
 var output = defaultOutputName
-var htmlExtras
+var htmlExtras = ""
 var htmlTag = "<html " + htmlExtras + ">"
 var htmlBegin = "<!DOCTYPE html>" + htmlTag
 var htmlEnd = "</html>"
@@ -22,6 +22,21 @@ var closedAfterOpens = new Array
 // The best function, replaces everything
 function replaceAll(string, search, replace) {
     return string.split(search).join(replace)
+}
+
+// Create File
+function createFile(outputData){
+    fs.writeFile(output, outputData, function (err) {
+        if (err) return console.log(err)
+        console.log("File Created:", output)
+    });
+}
+
+// Stitch code
+function codeStitcher(codeLibrary){
+    codeLibrary = codeLibrary.join("")
+    codeLibrary = htmlBegin + codeLibrary + htmlEnd
+    createFile(codeLibrary)
 }
 
 function lexer(text) {
@@ -64,34 +79,48 @@ function lexer(text) {
      * making sure our tags and information are placed properly
      */
 
-    console.log(currentOpenToClose, closedAfterOpens)
-    // console.log(parseInt(closedParenPlacement[closedParenPlacement.length - 1]) + 1)
-    // closedParenPlacement.pop()
-    // closedParenPlacement[closedParenPlacement.length - 1] = parseInt(closedParenPlacement[closedParenPlacement.length - 1]) + 1
     for (i in text){
-        
         for (x in keywordList){
             // Combine tags with open parens
             if (i === openParenPlacement[x]){
-                text[i] = "<" + keywordList[x]
+                text[i] = "<" + keywordList[x] + ">"
                 //close tag
                 if (closedAfterOpens[x] === 0){
                     text[closedParenPlacement[x - 1]] = "</" + keywordList[x] + ">"
-                    console.log("y:", x - 1)
                 } else if (closedAfterOpens[x] > 0) {
                     // it works, bit weird and no clue why, but it works
                     text[closedParenPlacement[closedAfterOpens[x] + parseInt(x) - 1]] = "</" + keywordList[x] + ">"
                 }
             }
         }
-        /**
-         * Since the tags are now proper, we need to now
-         * remove the old "tag" points. This needs to happen
-         * after both the open parens are done, and the closed
-         * parens as to not confuse the data later on.
-         */
     }
-    console.log(text, text.length, openParen, closedParen, keyword , keywordList, openParenPlacement, closedParenPlacement)
+
+    /**
+     * Since the tags are now proper, we need to now
+     * remove the old "tag" points. This needs to happen
+     * after both the open parens are done, and the closed
+     * parens as to not confuse the data later on.
+     */
+    for (i in text){
+        if (text[i].match(/^[A-Za-z]+$/)){
+            text.splice(i,1)
+        }
+    }
+
+    // build string-based tags
+    for(i in text){
+        /**
+         * How this currently works is the script takes the strings and remove "". The documentation
+         * will have a reason to a bug we get on the way it is supposed to work. For some unknown
+         * stupid reason, attributes break the entire script, we need to debug the reason this happens
+         */
+        if (text[i].startsWith("\"")){
+            text[i] = text[i].substr(1)
+            text[i] = text[i].slice(0, -1)
+        }
+    }
+    
+    codeStitcher(text)
 }
 
 // Parse text
@@ -106,8 +135,8 @@ function parser(text){
      */
 
     for (i in text){
+        text[i] = text[i].trim()
         for (i in text){
-            text[i] = text[i].trim()
             for (i in text){
                 if (text[i].startsWith("//")){
                     text.splice(i, 1)
@@ -162,6 +191,14 @@ function parser(text){
             c++
         }
         c = 0
+    }
+    
+    // final blankspace scrub
+    for (i in text){
+        text[i] = text[i].trim()
+        if (text[i] == ""){
+            text.splice(i, 1)
+        }
     }
     
     lexer(text)
