@@ -30,7 +30,6 @@ function lexer(text) {
             text[i] = "head"
         }
     }
-
     // Get data for parens and keywords for proper compiles
     for(i in text){
         if (text[i] == "("){
@@ -40,7 +39,7 @@ function lexer(text) {
         } else if (text[i] == ")"){
             // Closed paren counting (for data)
             closedParen++
-            closedParenPlacement.unshift(i)
+            closedParenPlacement.push(i)
         } else if (text[i].match(/^[A-Za-z]+$/) && !text.includes("\"")){
             keyword++
             keywordList.push(text[i])
@@ -54,18 +53,15 @@ function lexer(text) {
      * variables and using the Keyword List, place where everything is going. The amazing part of using a
      * Lisp-like syntax, you take the keyword list item placement, place them where the proper open parens
      * are in, and to close it we need to just do the reverse for closed paren! We also just kill the
-     * the Keyword Placement, so we can remove it. The best part of all of this, is that everything is
-     * able to be done step by step without issue, as the placement for closed parens was unshifted instead
-     * of pushed, meaning it is in reverse, giving us easy pickings with one loop.
+     * the Keyword Placement, so we can remove it. 
      */
     for (i in text){
         for (x in keywordList){
             // Combine tags with open parens
             if (i === openParenPlacement[x]){
                 text[i] = "<" + keywordList[x]
-            }
-            if (i === closedParenPlacement[x]){
-                text[i] = "</" + keywordList[x] + ">"
+                //close tag
+                text[closedParenPlacement[x]] = "</" + keywordList[x] + ">"
             }
         }
         /**
@@ -88,6 +84,7 @@ function parser(text){
      * stupid solutions are the ones that don't
      * work
      */
+
     for (i in text){
         for (i in text){
             text[i] = text[i].trim()
@@ -102,14 +99,21 @@ function parser(text){
         }
     }
 
+   
+
     // Split out all keywords
-    text = text.join()
+    text = text.join("")
     text = replaceAll(text, ")","\n)\n")
     text = replaceAll(text, "(","\n(\n")
     text = replaceAll(text, "\"","\n\"\n")
     text = replaceAll(text, " ","\n \n")
     text = text.split("\n")
-
+    // clean array
+    for(i in text){
+        if (text[i] === ""){
+            text.splice(i, 1)
+        }
+    }
     // Record data
     var itemCount = 0
     var itemPlaceOne = 0
