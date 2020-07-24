@@ -54,25 +54,34 @@ function lexer(text) {
         }
     }
 
-    for(i in closedAfterOpens){
-        console.log(currentOpenToClose, closedAfterOpens)
-    }
-
     // The tag placement
     /**
      * This method is going to take Keyword Placement, Open Paren Placement, and Closed Paren Placement
      * variables and using the Keyword List, place where everything is going. The amazing part of using a
      * Lisp-like syntax, you take the keyword list item placement, place them where the proper open parens
      * are in, and to close it we need to just do the reverse for closed paren! We also just kill the
-     * the Keyword Placement, so we can remove it. 
+     * the Keyword Placement, so we can remove it. We have the open to next closed variables to help us with
+     * making sure our tags and information are placed properly
      */
+
+    console.log(currentOpenToClose, closedAfterOpens)
+    // console.log(parseInt(closedParenPlacement[closedParenPlacement.length - 1]) + 1)
+    // closedParenPlacement.pop()
+    // closedParenPlacement[closedParenPlacement.length - 1] = parseInt(closedParenPlacement[closedParenPlacement.length - 1]) + 1
     for (i in text){
+        
         for (x in keywordList){
             // Combine tags with open parens
             if (i === openParenPlacement[x]){
                 text[i] = "<" + keywordList[x]
                 //close tag
-                text[closedParenPlacement[x]] = "</" + keywordList[x] + ">"
+                if (closedAfterOpens[x] === 0){
+                    text[closedParenPlacement[x - 1]] = "</" + keywordList[x] + ">"
+                    console.log("y:", x - 1)
+                } else if (closedAfterOpens[x] > 0) {
+                    // it works, bit weird and no clue why, but it works
+                    text[closedParenPlacement[closedAfterOpens[x] + parseInt(x) - 1]] = "</" + keywordList[x] + ">"
+                }
             }
         }
         /**
@@ -82,7 +91,7 @@ function lexer(text) {
          * parens as to not confuse the data later on.
          */
     }
-    console.log(text, openParen, closedParen, keyword , keywordList, openParenPlacement, closedParenPlacement)
+    console.log(text, text.length, openParen, closedParen, keyword , keywordList, openParenPlacement, closedParenPlacement)
 }
 
 // Parse text
