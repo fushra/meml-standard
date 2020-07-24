@@ -11,6 +11,10 @@ var htmlEnd = "</html>"
 var openParen = 0
 var closedParen = 0
 var keyword = 0
+var keywordList = new Array
+var keywordPlacement = new Array
+var openParenPlacement = new Array
+var closedParenPlacement = new Array
 
 // The best function, replaces everything
 function replaceAll(string, search, replace) {
@@ -27,20 +31,51 @@ function lexer(text) {
         }
     }
 
-    // Get data
+    // Get data for parens and keywords for proper compiles
     for(i in text){
         if (text[i] == "("){
             // Open paren counting (for data)
             openParen++
+            openParenPlacement.push(i)
         } else if (text[i] == ")"){
             // Closed paren counting (for data)
             closedParen++
+            closedParenPlacement.unshift(i)
         } else if (text[i].match(/^[A-Za-z]+$/) && !text.includes("\"")){
             keyword++
+            keywordList.push(text[i])
+            keywordPlacement.push(i)
         }
     }
 
-    console.log(text, openParen, closedParen, keyword)
+    // The tag placement
+    /**
+     * This method is going to take Keyword Placement, Open Paren Placement, and Closed Paren Placement
+     * variables and using the Keyword List, place where everything is going. The amazing part of using a
+     * Lisp-like syntax, you take the keyword list item placement, place them where the proper open parens
+     * are in, and to close it we need to just do the reverse for closed paren! We also just kill the
+     * the Keyword Placement, so we can remove it. The best part of all of this, is that everything is
+     * able to be done step by step without issue, as the placement for closed parens was unshifted instead
+     * of pushed, meaning it is in reverse, giving us easy pickings with one loop.
+     */
+    for (i in text){
+        for (x in keywordList){
+            // Combine tags with open parens
+            if (i === openParenPlacement[x]){
+                text[i] = "<" + keywordList[x]
+            }
+            if (i === closedParenPlacement[x]){
+                text[i] = "</" + keywordList[x] + ">"
+            }
+        }
+        /**
+         * Since the tags are now proper, we need to now
+         * remove the old "tag" points. This needs to happen
+         * after both the open parens are done, and the closed
+         * parens as to not confuse the data later on.
+         */
+    }
+    console.log(text, openParen, closedParen, keyword , keywordList, openParenPlacement, closedParenPlacement)
 }
 
 // Parse text
