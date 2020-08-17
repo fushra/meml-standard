@@ -1,4 +1,4 @@
-// Yeah this is basically LISP HTML
+// Basic MEML code
 (head
     (title "testing meml"))
 (body
