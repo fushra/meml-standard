@@ -122,6 +122,43 @@ function lexer(ast){
         }
     }
 
+    /**
+     * Now we have split the ID items, with 2 options each
+     * which are index (0) and 1 (1). Index is the placement
+     * in the array. We keep this to make everything easier.
+     * 
+     * We first will need to check placements of the lowest
+     * closing ID, then we need to check all opened ID's, the
+     * largest openID that is NOT GREATER THAN the closing
+     * tag will be selected as the closing tags ID. A new system
+     * of ID's will be created call dualID. dualID will discover
+     * Index has the closing tag, and 1 being the placement of the
+     * open tag placement.
+     */
+
+    var openCloseID = new Array
+    var dualID = new Array
+    var openDataSet = new Array
+    for (i in closedID){
+        for (x in openID){
+            console.log(openID[x], closedID[i][1])
+            if (openID[x][1] < closedID[i][1]){
+                openDataSet.push(openID[x][1])
+                openID[x].splice(1)
+                if (openDataSet.length >= 2){
+                    openCloseID = [closedID[i][1], Math.max(...openDataSet)]
+                    dualID.push(openCloseID)
+                    console.log(openDataSet)
+                    openDataSet.length = 0
+                } else {
+                    continue
+                }
+            } else {
+                continue
+            }
+        }
+    }
+    console.log(dualID)
     console.log(openData + " : " + openCount, "|||", closedData + " : " + closedCount, "|||", keywordData)
     console.log(openID, closedID)
 }
