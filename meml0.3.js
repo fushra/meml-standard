@@ -54,29 +54,76 @@ function lexer(ast){
 
     var openIDCounter = 0
     var openID = new Array
-    var closedID = new Array
     for (i in openData){
-        console.log(parseInt(i) + 1)
         var counter = 0
-        for (i in closedCount){
-            if (counter < closedCount){
-                if(openData[i] < closedData[counter]){
-                    if (openData[i] < openData[i+1]){
-                        console.log(parseInt(i))
-                    } else {
-                        console.log("err", parseInt(i))
-                    }
+        if (counter < closedCount){
+            if(openData[i] < closedData[counter]){
+                if (openData[i] < openData[i+1]){
+                    // L64ODI is an ID based on an error that is bad if it happens, 
+                    // the code is for if it happens we can fix it later
+                    console.log("ERROR: This should not be possible to get. Code L64ODI", parseInt(i))
+                    process.exit(1);
                 } else {
-
+                    openID.push(i + " " + openData[i])
                 }
+            } else {
+                openID.push(i + " " + openData[i])
             }
+            counter++
+        } else {
             counter++
         }
         openIDCounter++
-        openID.push(openIDCounter)
+    }
+    // Reset openIDCounter
+    openIDCounter = 0
+
+    var closedIDCounter = 0
+    var closedID = new Array
+    for(i in closedData){
+        var counter = 0
+        if (counter < closedCount){
+            // This if should ALWAYS be false.
+            if(closedData[i] < openData[counter]){
+                // L64CDI is an ID based on an error that is bad if it happens, 
+                // the code is for if it happens we can fix it later
+                console.log("ERROR: This should not be possible to get. Code L64CDI", parseInt(i))
+                process.exit(1);
+            } else {
+                closedID.push(i + " " + closedData[i])
+            }
+        }
+    }
+
+    // Now openID and closedID will look something like this:
+    // openID: [ '0 0', '1 2', '2 7', '3 9' ]
+    // closedID: [ '0 5', '1 6', '2 12', '3 13' ]
+    /**
+     * This new dataset has two main issues.
+     * ONE: It is string based, meaning we will need to translate
+     * the ID's to a new array dedicated to them as integers.
+     * TWO: This combines TWO required datasets, which is bad.
+     * We need to split the two data sets as part of one
+     * multidimensional array. This can be done with the same
+     * instructions.
+     */
+
+    for (i in openID){
+        openID[i] = openID[i].split(' ')
+        for (x in openID[i]){
+            openID[i][x] = parseInt(openID[i][x])
+        }
+    }
+
+    for (i in closedID){
+        closedID[i] = closedID[i].split(' ')
+        for (x in closedID[i]){
+            closedID[i][x] = parseInt(closedID[i][x])
+        }
     }
 
     console.log(openData + " : " + openCount, "|||", closedData + " : " + closedCount, "|||", keywordData)
+    console.log(openID, closedID)
 }
 
 // Parses and splits syntax
