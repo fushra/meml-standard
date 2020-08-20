@@ -123,41 +123,37 @@ function lexer(ast){
     }
 
     /**
-     * Now we have split the ID items, with 2 options each
-     * which are index (0) and 1 (1). Index is the placement
-     * in the array. We keep this to make everything easier.
-     * 
-     * We first will need to check placements of the lowest
-     * closing ID, then we need to check all opened ID's, the
-     * largest openID that is NOT GREATER THAN the closing
-     * tag will be selected as the closing tags ID. A new system
-     * of ID's will be created call dualID. dualID will discover
-     * Index has the closing tag, and 1 being the placement of the
-     * open tag placement.
+     * We now need to make an openDataSet Array, which will act as the array that
+     * holds all openID's less than the current closedID. Once we hit a datapoint
+     * in the openID's that is GREATER THAN he current closedID,  then we need to
+     * check which of the openDataSet is greater than the other(s).   If there is
+     * a point were we don't have more than one items in the data set,    then we
+     * just need to join the sets together,  
      */
 
-    var openCloseID = new Array
     var dualID = new Array
     var openDataSet = new Array
+    loopRestartPoint:
     for (i in closedID){
         for (x in openID){
-            console.log(openID[x], closedID[i][1])
             if (openID[x][1] < closedID[i][1]){
                 openDataSet.push(openID[x][1])
-                openID[x].splice(1)
-                if (openDataSet.length >= 2){
-                    openCloseID = [closedID[i][1], Math.max(...openDataSet)]
-                    dualID.push(openCloseID)
-                    console.log(openDataSet)
-                    openDataSet.length = 0
-                } else {
-                    continue
+            } else if(openID[x][1] > closedID[i][1]) {
+                dualID.push([Math.max(...openDataSet), closedID[i][1]])
+                
+                for (n in openID){
+                    if(openID[n][1] == Math.max(...openDataSet)){
+                        openID[n] = ""
+                        closedID[n] = "" 
+                    }
                 }
-            } else {
-                continue
-            }
+
+                openDataSet.length = 0 
+                continue loopRestartPoint
+            } 
         }
     }
+
     console.log(dualID)
     console.log(openData + " : " + openCount, "|||", closedData + " : " + closedCount, "|||", keywordData)
     console.log(openID, closedID)
