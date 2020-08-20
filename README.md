@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/fivnex/meml/master/meml-logo.png?token=APABEOE65MZQBP4LY2CCW6S66FUMI" alt="meml-icon" width="50px" />
 
-# Minimal Efficient Markup Language
+# Minimal & Efficient Markup Language
 Extension: `.meml`
 
 ## What is MEML?
