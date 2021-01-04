@@ -37,16 +37,27 @@ function translator(text){
     });
     //===============================================================//
 
-    console.log(text, openTags, closedTags, tagslist)
     /*
     Steps to finding the open/closed tag pair
     - count open tags until # is larger than closed tag placement
     - take the largest of the numbers for the smallest current closing tag
     */
 
+    // this is a short-term solution until I am able to design something that fucking works well
+    var possibleOpenTags = new Array
     for (i in closedTags){
-
+        for (x in openTags){
+            if (openTags[x] > closedTags[i]){
+                console.log(possibleOpenTags[possibleOpenTags.length - 1])
+                // Fuck, what do?
+                possibleOpenTags = new Array
+            } else {
+                possibleOpenTags.push(openTags[x])
+            }
+        }
     }
+
+    console.log(text, openTags, closedTags, tagslist)
 }
 
 // Code Splitter
