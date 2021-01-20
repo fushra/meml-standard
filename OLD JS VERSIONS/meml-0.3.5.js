@@ -1,7 +1,7 @@
 // Variables
 var fs = require("fs")
 var cliArgs = process.argv.slice(2)
-var version = "0.3"
+var version = "0.3.5"
 var defaultOutputName = cliArgs[0].replace(".meml", ".html")
 var output = defaultOutputName
 
@@ -50,6 +50,10 @@ function translator(text){
             if (openTags[x] > closedTags[i]){
                 console.log(possibleOpenTags[possibleOpenTags.length - 1])
                 // Fuck, what do?
+                /**
+                 * The plan: after finding the largest number in the possible open-tags
+                 * we need to
+                 */
                 possibleOpenTags = new Array
             } else {
                 possibleOpenTags.push(openTags[x])
