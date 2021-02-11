@@ -20,7 +20,7 @@ pub enum Kind {
 	character // 'A'
 	assign // = 
 	colonassign // :
-	amper // &
+	amper // &&
 	openparen // (
 	closedparen // )
 	comment // "//"
@@ -41,6 +41,18 @@ pub enum Kind {
 	href
 	// ---------------------------------- //
 
+	// Coming in later versions of MEML:
+	// plus
+	// minus
+	// pipe
+	// xor
+	// equals
+	// notequals
+	// lt
+	// ltequals
+	// gt
+	// gtequals
+
 	keywordend
 	keywordbeg
 	_end_
@@ -54,7 +66,20 @@ pub enum AtKind{
 }
 
 pub enum Precedence{
-	
+	lowest
+	condition // OR/AND
+	in_as
+	assign // =
+	call // func(X) or foo.method(X) (or other file calling)
+
+	// Coming in later versions of MEML:
+	// equals // == or !=
+	// sum // + 0 / ^ 
+	// product // * / &&
+	// mod // %
+	// prefix // -x or !x
+	// postfix // ++ --
+	// index // array[index]
 }
 
 pub const (
@@ -62,6 +87,7 @@ pub const (
 	valid_at_token = ['@FILE', '@LINE', "@COLUMN"]
 	token_str = build_token_string()
 	keywords = build_keys()
+	precedences = build_precedences()
 )
 
 const (
@@ -101,11 +127,53 @@ fn build_token_string() []string {
 	s[Kind.a] = 'a'
 
 	// Attributes
-	s[Kind.meta ] = 'meta'
+	s[Kind.meta] = 'meta'
 	s[Kind.src] = 'src'
 	s[Kind.href] = 'href'
 }
 
 pub fn build_precedences() []Precenence{
+	mut p := []Precedence{len: int(Kind._end_)}
 
+	p[Kind.openparen] = .index
+	p[Kind.dot] = .call
+	
+	// "=", "+=", ...
+	p[Kind.assign] = .assign
+	p[Kind.colonassign] = .assign
+	// Coming in later versions of MEML:
+	// p[Kind.plusassign] = .assign
+	// p[Kind.minusassign] = .assign
+	// p[Kind.divideassign] = .assign
+	// p[Kind.multiplyassign] = .assign
+	// p[Kind.andassign] = .assign
+	// p[Kind.orassign] = .assign
+
+	// Coming in later versions of MEML:
+	// "++", "--"
+	// p[Kind.increase] = .postfix
+	// p[Kind.decrease] = .postfix
+	//
+	// "*", "/", "%", "<<", ">>". "&"
+	// p[Kind.multiply] = .product
+	// p[Kind.divide] = .product
+	// p[Kind.mod] = .product
+	// p[Kind.amper] = .product
+	// p[Kind.multiply] = .product
+	// p[Kind.multiply] = .product
+	// p[Kind.multiply] = .product
+	//
+	// "+", "-", "|", "^"
+	// p[Kind.plus] = .sum
+	// p[Kind.minus] = .sum
+	// p[Kind.pipe] = .sum
+	// p[Kind.xor] = .sum
+	//
+	// "==", "!=", "<", ">", "<=", ">="
+	// p[Kind.equals] = .equals
+	// p[Kind.notequals] = .equals
+	// p[kind.lt] = .equals
+	// p[kind.ltequals] = .equals
+	// p[kind.gt] = .equals
+	// p[kind.gtequals] = .equals
 }
