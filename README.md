@@ -6,8 +6,6 @@ Extension: `.meml`
 ## What is MEML?
 MEML is a simple markup language that translates into HTML/CSS. MEML includes tags that are dedicated to basics like a dropdown menu tag, viewport tag, charset tag, navigation, and minimization of HTML/CSS.
 
-MEML is built with JavaScript and Sass. JavaScript is used to translate the MEML code into valid HTML/CSS. The Sass is built to work on the functionality of some of the tags, and prebuilt options.
-
 MEML gets inspiration from languages such as LISP, HTML itself, and Pug. Most of the inspiration for MEML is from LISP.
 
 ## Why MEML over anything else?
