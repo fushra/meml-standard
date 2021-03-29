@@ -46,9 +46,11 @@ A basic webpage in MEML looks like this:
 
 ```lisp
 (head
-    (title "Hello World!"))
+    (title "Hello World!")
+)
 (body
-    (p "Basic website made with MEML!"))
+    (p "Basic website made with MEML!")
+)
 ```
 
 This will normally translate to HTML like this:
@@ -74,17 +76,23 @@ While it doesn't do much for smaller websites like this, when getting into bigge
 ```lisp
 (head
     (title "navigation menu")
-    (viewport scale="1"))
+    (viewport scale="1")
+)
 (body
-    (nav type="full-width, flexbox")
+    (nav type="full-width, flexbox"
         (fbsplit
-            (img src="logo.png"))
+            (img src="logo.png")
+        )
         (fbsplit
             (dropdown "dropdown" method="click"
                 (dditem "option 1" href="#")
                 (dditem "option 2" href="#")
-                (dditem "option 3" href="#"))
-            (a "A button" type="button" border-radius="2rem" color="white" bgcolor="black" :hover.bgcolor="#333" href="#")))
+                (dditem "option 3" href="#")
+            )
+            (a "A button" type="button" border-radius="2rem" color="white" bgcolor="black" :hover.bgcolor="#333" href="#")
+        )
+    )
+)
 ```
 
 The HTML translation:
