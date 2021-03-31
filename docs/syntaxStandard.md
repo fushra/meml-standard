@@ -19,7 +19,7 @@ statement   → memlStmt;
 // can be as many expressions as is
 //
 // TODO: Add properties to meml tags
-memlStmt    → "(" identifier exprOrMeml* ")";
+memlStmt    → '(' identifier exprOrMeml* ')';
 
 // Expression statements and meml can be used interchangeably
 // within a tag
@@ -43,12 +43,13 @@ literal     → number
 unary       → ('-' | '!') expression;
 
 // This is your standard something + something or a boolean
-// comparison
+// comparison. Please note the order of operations with
+// * and / having priority over + and -
 binary      → expression operator expression;
 
 // Everything inside of the grouping takes precedence to
 // everything outside
-grouping    → "(" expression ")";
+grouping    → '(' expression ')';
 
 // All of the different operators that you should want
 //
