@@ -8,6 +8,11 @@ Again, the language grammer here is based off of that for lox. Here page is a pr
 
 ```ts
 // This is the entry point into the program (a single file).
+//
+// DISCUSSION: How should scripting work? Should it be JS
+//             passthrough, should it be limited to inside
+//             custom tags, should it be LISP or should it
+//             be something more c-like (or python-like)
 page        → statement* EOF;
 
 // This will contain all of the major logic, for the moment
@@ -17,9 +22,13 @@ statement   → memlStmt;
 
 // This is what a meml tag will look like. Note that there
 // can be as many expressions as is
-//
-// TODO: Add properties to meml tags
-memlStmt    → '(' identifier exprOrMeml* ')';
+memlStmt    → '(' IDENTIFIER memlProp* exprOrMeml* ')';
+
+// This is the layout for the properties of a meml tag. It
+// can either be a key-value pair or a key pair (for example
+// `disabled`)
+memlProp    →  IDENTIFIER
+            | IDENTIFIER '=' expression;
 
 // Expression statements and meml can be used interchangeably
 // within a tag
@@ -33,8 +42,8 @@ expression  → literal
             | grouping;
 
 // Contains all of the raw data types.
-literal     → number
-            | string
+literal     → NUMBER
+            | STRING
             | 'true'
             | 'false'
             | 'null';
@@ -72,11 +81,12 @@ Here is a nice cheat sheet for all of the symbols:
 - `→`: Separator
 - `|`: Or, the item that comes first takes precedence
 - `;`: End of this line
-- `EOF`: End of file token
 - `*`: None, one, or multiple
 - `(...)`: Grouping, everything inside is calculated to form one answer outside
 
 Additionally, here is a cheat sheet of types and tokens. Typescript types are used because they are the limitation we are bound with when working with web technologies.
 
-- `number`
-- `string` a set of text
+- `NUMBER`
+- `STRING`: Text
+- `EOF`: End of file token
+- `IDENTIFIER`: The name of a defined value, for example tag or variable. like a string, just for a compiler
