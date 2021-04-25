@@ -39,45 +39,34 @@ memlStmt    = '(' IDENTIFIER memlProp* statement* ')';
 memlProp    =  IDENTIFIER
             | IDENTIFIER '=' expression;
 
-// Doing math, boolean logic or combining strings and such
-// Contains additional types
-expression  = literal
-            | unary
-            | binary
-            | destructure
-            | grouping;
 
-// Contains all of the raw data types.
-literal     = NUMBER
-            | STRING
-            | 'true'
-            | 'false'
-            | 'null';
+expression  = equality;
+
+// Check if something is equal
+equality    = comparison (('!=' | '==') comparison)*;
+
+// Check how one value compares to anther
+comparison  = term (('>' | '>=' | '<' | '<=') term)*;
+
+// Addition or subtraction
+term        = factor (('-' | '+') factor)*;
+
+// Multiplication and division
+factor      = unary (('/' | '*') unary)*;
 
 // Used to negate or invert a value
-unary       = ('-' | '!') expression;
+unary       = ('!' | '-') unary
+            | primary;
 
-// This is your standard something + something or a boolean
-// comparison. Please note the order of operations with
-// * and / having priority over + and -
-binary      = expression operator expression;
-
-// Everything inside of the grouping takes precedence to
-// everything outside
-grouping    = '(' expression ')';
+// Very basic stuff
+primary     = NUMBER | STRING | 'true' | 'false' | 'null'
+            | '(' expression ')';
 
 // When you need to pass paramaters into a function or
 // component, you would use a destructure expression.
 // They only take in identifiers and WILL NOT take in
 // literals
 destructure = '(' IDENTIFIER* ')';
-
-// All of the different operators that you should want
-//
-// DISCUSSION: Should we include === or does that just
-//             need to die
-operator    = "==" | "!=" | "<" | "<=" | ">" | ">="
-            | "+"  | "-"  | "*" | "/" ;
 ```
 
 ## Appendix 1: Grammar reference
