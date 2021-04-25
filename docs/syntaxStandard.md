@@ -13,7 +13,7 @@ Again, the language grammar here is based off of that for lox. Here page is a pr
 //             passthrough, should it be limited to inside
 //             custom tags, should it be LISP or should it
 //             be something more c-like (or python-like)
-page        = ('(' declaration ')')* EOF;
+page        = declaration* EOF;
 
 // For declaring stuff like constants or components
 declaration = compDecl
@@ -30,11 +30,11 @@ statement   = memlStmt
 // if it cannot find the correct tag as part of `memlStmt`. The destructure
 // here is for passing in props that will be used and the identifier
 // is the tag name.
-compDecl    = 'component' IDENTIFIER '(' destructure ')' '(' memlStmt ')';
+compDecl    = '(' 'component' IDENTIFIER '(' destructure ')' memlStmt ')';
 
 // This is what a meml tag will look like. Note that there
 // can be as many expressions as is
-memlStmt    = IDENTIFIER memlProp* statement*;
+memlStmt    = '(' IDENTIFIER memlProp* statement* ')';
 
 // This is the layout for the properties of a meml tag. It
 // can either be a key-value pair or a key pair (for example
