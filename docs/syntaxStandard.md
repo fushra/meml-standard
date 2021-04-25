@@ -19,29 +19,25 @@ page        = statement* EOF;
 // it only accepts meml statements, but that will change once
 // scripting is being planned
 statement   = compntStmt
-            | memlStmt;
+            | memlStmt
+            | expression;
 
 // This is how components should be defined. The MEML interpreter must
 // keep a log of all of the components defined and search through them
 // if it cannot find the correct tag as part of `memlStmt`. The destructure
 // here is for passing in props that will be used and the identifier
 // is the tag name.
-compntStmt  = '(' 'component' IDENTIFIER destructure? exprOrMeml ')';
+compntStmt  = '(' 'component' IDENTIFIER destructure? statement ')';
 
 // This is what a meml tag will look like. Note that there
 // can be as many expressions as is
-memlStmt    = '(' IDENTIFIER memlProp* exprOrMeml* ')';
+memlStmt    = '(' IDENTIFIER memlProp* statement* ')';
 
 // This is the layout for the properties of a meml tag. It
 // can either be a key-value pair or a key pair (for example
 // `disabled`)
 memlProp    =  IDENTIFIER
             | IDENTIFIER '=' expression;
-
-// Expression statements and meml can be used interchangeably
-// within a tag
-exprOrMeml  = memlStmt
-            | expression;
 
 // Doing math, boolean logic or combining strings and such
 // Contains additional types
