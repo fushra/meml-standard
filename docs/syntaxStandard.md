@@ -30,7 +30,7 @@ statement   = memlStmt
 // if it cannot find the correct tag as part of `memlStmt`. The destructure
 // here is for passing in props that will be used and the identifier
 // is the tag name.
-compDecl    = 'component' IDENTIFIER destructure? statement;
+compDecl    = 'component' IDENTIFIER ('(' destructure ')')? '(' statement ')';
 
 // This is what a meml tag will look like. Note that there
 // can be as many expressions as is
@@ -39,7 +39,7 @@ memlStmt    = IDENTIFIER memlProp* statement*;
 // This is the layout for the properties of a meml tag. It
 // can either be a key-value pair or a key pair (for example
 // `disabled`)
-memlProp    =  IDENTIFIER
+memlProp    = IDENTIFIER
             | IDENTIFIER '=' expression;
 
 
@@ -69,7 +69,7 @@ primary     = NUMBER | STRING | 'true' | 'false' | 'null'
 // component, you would use a destructure expression.
 // They only take in identifiers and WILL NOT take in
 // literals
-destructure = '(' IDENTIFIER* ')';
+destructure = IDENTIFIER ( ',' IDENTIFIER )*;
 ```
 
 ## Appendix 1: Grammar reference
