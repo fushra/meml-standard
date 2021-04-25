@@ -13,58 +13,58 @@ Again, the language grammer here is based off of that for lox. Here page is a pr
 //             passthrough, should it be limited to inside
 //             custom tags, should it be LISP or should it
 //             be something more c-like (or python-like)
-page        → statement* EOF;
+page        = statement* EOF;
 
 // This will contain all of the major logic, for the moment
 // it only accepts meml statements, but that will change once
 // scripting is being planned
-statement   → memlStmt;
+statement   = memlStmt;
 
 // This is what a meml tag will look like. Note that there
 // can be as many expressions as is
-memlStmt    → '(' IDENTIFIER memlProp* exprOrMeml* ')';
+memlStmt    = '(' IDENTIFIER memlProp* exprOrMeml* ')';
 
 // This is the layout for the properties of a meml tag. It
 // can either be a key-value pair or a key pair (for example
 // `disabled`)
-memlProp    →  IDENTIFIER
+memlProp    =  IDENTIFIER
             | IDENTIFIER '=' expression;
 
 // Expression statements and meml can be used interchangeably
 // within a tag
-exprOrMeml  → memlStmt
+exprOrMeml  = memlStmt
             | expression;
 
 // Doing math, boolean logic or combining strings and such
-expression  → literal
+expression  = literal
             | unary
             | binary
             | grouping;
 
 // Contains all of the raw data types.
-literal     → NUMBER
+literal     = NUMBER
             | STRING
             | 'true'
             | 'false'
             | 'null';
 
 // Used to negate or invert a value
-unary       → ('-' | '!') expression;
+unary       = ('-' | '!') expression;
 
 // This is your standard something + something or a boolean
 // comparison. Please note the order of operations with
 // * and / having priority over + and -
-binary      → expression operator expression;
+binary      = expression operator expression;
 
 // Everything inside of the grouping takes precedence to
 // everything outside
-grouping    → '(' expression ')';
+grouping    = '(' expression ')';
 
 // All of the different operators that you should want
 //
 // DISCUSSION: Should we include === or does that just
 //             need to die
-operator    → "==" | "!=" | "<" | "<=" | ">" | ">="
+operator    = "==" | "!=" | "<" | "<=" | ">" | ">="
             | "+"  | "-"  | "*" | "/" ;
 ```
 
@@ -78,7 +78,7 @@ Identifier → What that identifier consists of
 
 Here is a nice cheat sheet for all of the symbols:
 
-- `→`: Separator
+- `=`: Separator
 - `|`: Or, the item that comes first takes precedence
 - `;`: End of this line
 - `*`: None, one, or multiple
