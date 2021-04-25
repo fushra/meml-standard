@@ -4,7 +4,7 @@ This provides implementation details for the meml syntax. For an introduction to
 
 ## Language grammar
 
-Again, the language grammer here is based off of that for lox. Here page is a program. It contains everything in a file.
+Again, the language grammar here is based off of that for lox. Here page is a program. It contains everything in a file.
 
 ```ts
 // This is the entry point into the program (a single file).
@@ -18,7 +18,15 @@ page        = statement* EOF;
 // This will contain all of the major logic, for the moment
 // it only accepts meml statements, but that will change once
 // scripting is being planned
-statement   = memlStmt;
+statement   = compntStmt
+            | memlStmt;
+
+// This is how components should be defined. The MEML interpreter must
+// keep a log of all of the components defined and search through them
+// if it cannot find the correct tag as part of `memlStmt`. The destructure
+// here is for passing in props that will be used and the identifier
+// is the tag name.
+compntStmt  = '(' 'component' IDENTIFIER destructure? exprOrMeml ')';
 
 // This is what a meml tag will look like. Note that there
 // can be as many expressions as is
@@ -36,9 +44,11 @@ exprOrMeml  = memlStmt
             | expression;
 
 // Doing math, boolean logic or combining strings and such
+// Contains additional types
 expression  = literal
             | unary
             | binary
+            | destructure
             | grouping;
 
 // Contains all of the raw data types.
@@ -59,6 +69,12 @@ binary      = expression operator expression;
 // Everything inside of the grouping takes precedence to
 // everything outside
 grouping    = '(' expression ')';
+
+// When you need to pass paramaters into a function or
+// component, you would use a destructure expression.
+// They only take in identifiers and WILL NOT take in
+// literals
+destructure = '(' IDENTIFIER* ')';
 
 // All of the different operators that you should want
 //
@@ -82,6 +98,7 @@ Here is a nice cheat sheet for all of the symbols:
 - `|`: Or, the item that comes first takes precedence
 - `;`: End of this line
 - `*`: None, one, or multiple
+- `?`: None or one (optional)
 - `(...)`: Grouping, everything inside is calculated to form one answer outside
 
 Additionally, here is a cheat sheet of types and tokens. Typescript types are used because they are the limitation we are bound with when working with web technologies.
