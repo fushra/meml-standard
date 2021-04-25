@@ -30,7 +30,7 @@ statement   = memlStmt
 // if it cannot find the correct tag as part of `memlStmt`. The destructure
 // here is for passing in props that will be used and the identifier
 // is the tag name.
-compDecl    = 'component' IDENTIFIER '(' destructure ')' '(' statement ')';
+compDecl    = 'component' IDENTIFIER '(' destructure ')' '(' memlStmt ')';
 
 // This is what a meml tag will look like. Note that there
 // can be as many expressions as is
