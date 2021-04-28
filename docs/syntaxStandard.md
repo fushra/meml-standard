@@ -63,7 +63,10 @@ unary       = ('!' | '-') unary
 
 // Very basic stuff
 primary     = NUMBER | STRING | 'true' | 'false' | 'null'
-            | '(' expression ')';
+            | '(' expression ')' | identifier;
+
+// Identifier types are used specifically for variable declaration etc.
+identifier  = IDENTIFIER;
 
 // When you need to pass paramaters into a function or
 // component, you would use a destructure expression.
