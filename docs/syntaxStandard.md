@@ -4,19 +4,13 @@ This provides implementation details for the meml syntax. For an introduction to
 
 ## Language grammar
 
-Again, the language grammar here is based off of that for lox. Here page is a program. It contains everything in a file.
-
 ```ts
 // This is the entry point into the program (a single file).
-//
-// DISCUSSION: How should scripting work? Should it be JS
-//             passthrough, should it be limited to inside
-//             custom tags, should it be LISP or should it
-//             be something more c-like (or python-like)
 page        = declaration* EOF;
 
 // For declaring stuff like constants or components
 declaration = compDecl
+            | exportDecl
             | statement;
 
 // This will contain all of the major logic, for the moment
@@ -31,6 +25,17 @@ statement   = memlStmt
 // here is for passing in props that will be used and the identifier
 // is the tag name.
 compDecl    = '(' 'component' IDENTIFIER '(' destructure ')' memlStmt ')';
+
+// This is how exports should be defined. Please limit this to one export
+// statement where possible. You may decide to implement support for multiple
+// but provide linter warnings of some kind just to keep meml code easier to read
+exportDecl  = '(' 'export' '(' destructure ')' ')';
+
+// Import statements should have a structure like this. You can either specify what you
+// want to import from specific exports or everything from a file. Additionally, for
+// css and js files, you can dump them into the current meml file with the command
+// (import "./file.(css|js)")
+importStmt  = '(' 'import' ((('(' destructure ')') | 'everything') 'from')? STRING ')'
 
 // This is what a meml tag will look like. Note that there
 // can be as many expressions as is
@@ -68,7 +73,7 @@ primary     = NUMBER | STRING | 'true' | 'false' | 'null'
 // Identifier types are used specifically for variable declaration etc.
 identifier  = IDENTIFIER;
 
-// When you need to pass paramaters into a function or
+// When you need to pass parameters into a function or
 // component, you would use a destructure expression.
 // They only take in identifiers and WILL NOT take in
 // literals
