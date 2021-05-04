@@ -4,68 +4,80 @@ This provides implementation details for the meml syntax. For an introduction to
 
 ## Language grammar
 
-Again, the language grammer here is based off of that for lox. Here page is a program. It contains everything in a file.
-
 ```ts
 // This is the entry point into the program (a single file).
-//
-// DISCUSSION: How should scripting work? Should it be JS
-//             passthrough, should it be limited to inside
-//             custom tags, should it be LISP or should it
-//             be something more c-like (or python-like)
-page        → statement* EOF;
+page        = declaration* EOF;
+
+// For declaring stuff like constants or components
+declaration = compDecl
+            | exportDecl
+            | statement;
 
 // This will contain all of the major logic, for the moment
 // it only accepts meml statements, but that will change once
 // scripting is being planned
-statement   → memlStmt;
+statement   = memlStmt
+            | expression;
+
+// This is how components should be defined. The MEML interpreter must
+// keep a log of all of the components defined and search through them
+// if it cannot find the correct tag as part of `memlStmt`. The destructure
+// here is for passing in props that will be used and the identifier
+// is the tag name.
+compDecl    = '(' 'component' IDENTIFIER '(' destructure ')' memlStmt ')';
+
+// This is how exports should be defined. Please limit this to one export
+// statement where possible. You may decide to implement support for multiple
+// but provide linter warnings of some kind just to keep meml code easier to read
+exportDecl  = '(' 'export' '(' destructure ')' ')';
+
+// Import statements should have a structure like this. You can either specify what you
+// want to import from specific exports or everything from a file. Additionally, for
+// css and js files, you can dump them into the current meml file with the command
+// (import "./file.(css|js)")
+importStmt  = '(' 'import' ((('(' destructure ')') | 'everything') 'from')? STRING ')'
 
 // This is what a meml tag will look like. Note that there
 // can be as many expressions as is
-memlStmt    → '(' IDENTIFIER memlProp* exprOrMeml* ')';
+memlStmt    = '(' IDENTIFIER memlProp* statement* ')';
 
 // This is the layout for the properties of a meml tag. It
 // can either be a key-value pair or a key pair (for example
 // `disabled`)
-memlProp    →  IDENTIFIER
+memlProp    = IDENTIFIER
             | IDENTIFIER '=' expression;
 
-// Expression statements and meml can be used interchangeably
-// within a tag
-exprOrMeml  → memlStmt
-            | expression;
 
-// Doing math, boolean logic or combining strings and such
-expression  → literal
-            | unary
-            | binary
-            | grouping;
+expression  = equality;
 
-// Contains all of the raw data types.
-literal     → NUMBER
-            | STRING
-            | 'true'
-            | 'false'
-            | 'null';
+// Check if something is equal
+equality    = comparison (('!=' | '==') comparison)*;
+
+// Check how one value compares to anther
+comparison  = term (('>' | '>=' | '<' | '<=') term)*;
+
+// Addition or subtraction
+term        = factor (('-' | '+') factor)*;
+
+// Multiplication and division
+factor      = unary (('/' | '*') unary)*;
 
 // Used to negate or invert a value
-unary       → ('-' | '!') expression;
+unary       = ('!' | '-') unary
+            | primary;
 
-// This is your standard something + something or a boolean
-// comparison. Please note the order of operations with
-// * and / having priority over + and -
-binary      → expression operator expression;
+// Very basic stuff
+primary     = NUMBER | STRING | 'true' | 'false' | 'null'
+            | '(' expression ')' | identifier;
 
-// Everything inside of the grouping takes precedence to
-// everything outside
-grouping    → '(' expression ')';
+// Identifier types are used specifically for variable declaration etc.
+identifier  = IDENTIFIER;
 
-// All of the different operators that you should want
-//
-// DISCUSSION: Should we include === or does that just
-//             need to die
-operator    → "==" | "!=" | "<" | "<=" | ">" | ">="
-            | "+"  | "-"  | "*" | "/" ;
+// When you need to pass parameters into a function or
+// component, you would use a destructure expression.
+// They only take in identifiers and WILL NOT take in
+// literals
+destructure = IDENTIFIER ( ',' IDENTIFIER )*;
 ```
 
 ## Appendix 1: Grammar reference
@@ -78,10 +90,11 @@ Identifier → What that identifier consists of
 
 Here is a nice cheat sheet for all of the symbols:
 
-- `→`: Separator
+- `=`: Separator
 - `|`: Or, the item that comes first takes precedence
 - `;`: End of this line
 - `*`: None, one, or multiple
+- `?`: None or one (optional)
 - `(...)`: Grouping, everything inside is calculated to form one answer outside
 
 Additionally, here is a cheat sheet of types and tokens. Typescript types are used because they are the limitation we are bound with when working with web technologies.
